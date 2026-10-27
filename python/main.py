@@ -2,14 +2,28 @@ import psycopg
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
+from contextlib import asynccontextmanager
 
 DATABASE_URL = "postgresql://chores:chores@localhost:5432/chores"
 
-app = FastAPI()
+def init_db():
+    sql = open("schema.sql").read()
+    with psycopg.connect(DATABASE_URL) as con:
+        with con.cursor() as cur:
+            cur.execute(sql)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()    # spustí se při startu aplikace
+    yield        # tady aplikace běží
+
+app = FastAPI(lifespan=lifespan)
 
 class Completion(BaseModel):
+    id:int
     user_id: int
     task_id: int
+    task_name: str
     task_priority: int
     task_deadline: datetime | None = None
     task_completed_at: datetime
