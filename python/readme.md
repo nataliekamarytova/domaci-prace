@@ -1,1 +1,22 @@
-uv run fastapi dev - how to run python code
+Domaci-prace app – scoring service
+
+Short description: ***what this part of the app does.***
+
+## How to run
+
+1. Start the database: `docker compose up -d`
+2. Install dependencies: `uv sync`
+3. Run the app: `uv run fastapi dev main.py`
+4. Open API docs: http://127.0.0.1:8000/docs
+
+## Project structure
+
+- `main.py` – API endpoints
+- `db.py` – database connection and migration runner
+- `migrations/` – SQL migrations, applied automatically on startup
+
+## Adding a migration
+
+Create a new file in `migrations/` with the next number,
+e.g. `002_add_foreign_keys.sql`. Never edit migrations
+that have already been applied.
