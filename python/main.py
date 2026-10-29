@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from contextlib import asynccontextmanager
 from db import DATABASE_URL,init_db
+import psycopg
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,9 +22,14 @@ class Completion(BaseModel):
     task_completed_at: datetime
 
 @app.post("/completions")
-async def get_completion(completion:Completion):
+def get_completion(completion:Completion):
+    with psycopg.connect(DATABASE_URL) as con:
+        with con.cursor() as cur:
+            cur.execute("INSERT INTO scoring(user_id,task_id,received_points) VALUES (%s,%s,%s)",(completion.user_id,completion.task_id,0))
+    #uložit hodnoty do db
     result = {"points": 0,**completion.model_dump()}
     return(result)
+    
   
 @app.get("/health")
 async def get_health():
