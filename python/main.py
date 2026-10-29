@@ -1,16 +1,8 @@
-import psycopg
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
 from contextlib import asynccontextmanager
-
-DATABASE_URL = "postgresql://chores:chores@localhost:5432/chores"
-
-def init_db():
-    sql = open("schema.sql").read()
-    with psycopg.connect(DATABASE_URL) as con:
-        with con.cursor() as cur:
-            cur.execute(sql)
+from db import DATABASE_URL,init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
