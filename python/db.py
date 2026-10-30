@@ -1,7 +1,9 @@
 import psycopg
 import os
+from psycopg_pool import ConnectionPool
 
 DATABASE_URL = "postgresql://chores:chores@localhost:5432/chores"
+pool = ConnectionPool(DATABASE_URL, open=False) #zatím není spojení otevřeno
 
 def init_db(): #fce slouzici k vytvoreni scoring tabulky, dle nejnovejsi migrace
     with psycopg.connect(DATABASE_URL) as conn:
