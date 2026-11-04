@@ -1,6 +1,6 @@
 import os
 from contextlib import asynccontextmanager
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 import httpx
 from fastapi import FastAPI, HTTPException
@@ -10,6 +10,9 @@ from pydantic import BaseModel
 from db import init_db, pool
 
 SCORING_SERVICE_URL = os.environ.get("SCORING_SERVICE_URL", "http://localhost:8000")
+
+# Placeholder - čeká se na přesné pravidlo od přítele, zatím deadline + 3 dny.
+HARD_DEADLINE_OFFSET = timedelta(days=3)
 
 
 @asynccontextmanager
@@ -84,6 +87,7 @@ def complete_task(task_id: int, body: CompleteTaskRequest):
             deadline = fixed_deadline or datetime.combine(
                 completed_at.date(), time(23, 59, 59), tzinfo=completed_at.tzinfo
             )
+            hard_deadline = deadline + HARD_DEADLINE_OFFSET
 
             cur.execute(
                 """SELECT 1 FROM completions
@@ -109,6 +113,7 @@ def complete_task(task_id: int, body: CompleteTaskRequest):
             "task_name": task_name,
             "task_priority": priority,
             "task_deadline": deadline.isoformat(),
+            "task_hard_deadline": hard_deadline.isoformat(),
             "task_completed_at": completed_at.isoformat(),
             "base_points": base_points,
         },
