@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from contextlib import asynccontextmanager
 from db import DATABASE_URL,init_db, pool
+from scoring import get_points
 import psycopg
 
 @asynccontextmanager
@@ -21,17 +22,20 @@ class Completion(BaseModel):
     task_name: str
     task_priority: int
     task_deadline: datetime | None = None
+    task_hard_deadline: datetime | None = None
     task_completed_at: datetime
+    base_points: int
+
 
 @app.post("/completions")
 def get_completion(completion:Completion):
+    points = get_points(completion.base_points,completion.task_deadline,completion.task_completed_at,completion.task_priority,completion.task_hard_deadline)
     with pool.connection() as con:
         with con.cursor() as cur:
-            cur.execute("INSERT INTO scoring(user_id,task_id,received_points) VALUES (%s,%s,%s)",(completion.user_id,completion.task_id,0))
+            cur.execute("INSERT INTO scoring(user_id,task_id,received_points) VALUES (%s,%s,%s)",(completion.user_id,completion.task_id,points))
     #uložit hodnoty do db
-    result = {"points": 0,**completion.model_dump()}
+    result = {"points":points, **completion.model_dump()}
     return(result)
-    
   
 @app.get("/health")
 async def get_health():
