@@ -19,6 +19,13 @@ async function loadUsers() {
   }
 }
 
+const FREQUENCY_LABELS = {
+  daily: "denně",
+  weekly: "týdně",
+  monthly: "měsíčně",
+  irregular: "nepravidelně",
+};
+
 async function loadChecklist() {
   const list = document.getElementById("task-list");
   if (activeUserId === null) {
@@ -29,20 +36,21 @@ async function loadChecklist() {
   list.innerHTML = "";
   for (const task of tasks) {
     const li = document.createElement("li");
-    li.classList.toggle("done", task.done_today);
+    li.classList.toggle("done", task.done);
 
+    const freqLabel = FREQUENCY_LABELS[task.frequency] ?? task.frequency;
     const label = document.createElement("span");
-    if (task.done_today) {
-      label.textContent = `✅ ${task.name} (${task.points_awarded} b.)`;
+    if (task.done) {
+      label.textContent = `✅ ${task.name} (${freqLabel}, ${task.points_awarded} b.)`;
     } else if (task.overdue) {
-      label.textContent = `⚠️ ${task.name} (${task.base_points} b.) - opožděno`;
+      label.textContent = `⚠️ ${task.name} (${freqLabel}, ${task.base_points} b.) - opožděno`;
       li.classList.add("overdue");
     } else {
-      label.textContent = `${task.name} (${task.base_points} b.)`;
+      label.textContent = `${task.name} (${freqLabel}, ${task.base_points} b.)`;
     }
     li.appendChild(label);
 
-    if (!task.done_today) {
+    if (!task.done) {
       const button = document.createElement("button");
       button.textContent = "Hotovo";
       button.onclick = () => completeTask(task.task_id);
