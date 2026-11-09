@@ -36,6 +36,21 @@ services:
       timeout: 3s
       retries: 10
 
+  metabase:
+    image: metabase/metabase:latest
+    container_name: chores-metabase
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - metabase_data:/metabase-data
+    environment:
+      MB_DB_FILE: /metabase-data/metabase.db
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   pgdata:
   tasks_pgdata:
+  metabase_data:
