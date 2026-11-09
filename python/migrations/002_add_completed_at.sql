@@ -1,0 +1,1 @@
+ALTER TABLE scoring ADD completed_at TIMESTAMPTZ; 
