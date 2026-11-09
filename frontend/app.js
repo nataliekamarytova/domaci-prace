@@ -41,7 +41,7 @@ async function loadChecklist() {
     const freqLabel = FREQUENCY_LABELS[task.frequency] ?? task.frequency;
     const label = document.createElement("span");
     if (task.done) {
-      label.textContent = `✅ ${task.name} (${freqLabel}, ${task.points_awarded} b.)`;
+      label.textContent = `✅ ${task.name} (${freqLabel}, ${task.points_awarded} b.) - splnil(a) ${task.completed_by}`;
     } else if (task.overdue) {
       label.textContent = `⚠️ ${task.name} (${freqLabel}, ${task.base_points} b.) - opožděno`;
       li.classList.add("overdue");
