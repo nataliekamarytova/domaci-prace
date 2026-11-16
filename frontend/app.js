@@ -37,25 +37,56 @@ async function loadChecklist() {
   for (const task of tasks) {
     const li = document.createElement("li");
     li.classList.toggle("done", task.done);
+    li.classList.toggle("overdue", task.overdue && !task.done);
+
+    const checkbox = document.createElement("button");
+    checkbox.className = "checkbox";
+    if (task.done) {
+      checkbox.textContent = "✓";
+      checkbox.disabled = true;
+    } else {
+      checkbox.onclick = () => completeTask(task.task_id);
+    }
+    li.appendChild(checkbox);
+
+    const info = document.createElement("div");
+    info.className = "task-info";
+
+    const name = document.createElement("div");
+    name.className = "task-name";
+    name.textContent = task.name;
+    info.appendChild(name);
+
+    const meta = document.createElement("div");
+    meta.className = "task-meta";
 
     const freqLabel = FREQUENCY_LABELS[task.frequency] ?? task.frequency;
-    const label = document.createElement("span");
-    if (task.done) {
-      label.textContent = `✅ ${task.name} (${freqLabel}, ${task.points_awarded} b.) - splnil(a) ${task.completed_by}`;
-    } else if (task.overdue) {
-      label.textContent = `⚠️ ${task.name} (${freqLabel}, ${task.base_points} b.) - opožděno`;
-      li.classList.add("overdue");
-    } else {
-      label.textContent = `${task.name} (${freqLabel}, ${task.base_points} b.)`;
-    }
-    li.appendChild(label);
+    const freqBadge = document.createElement("span");
+    freqBadge.className = "badge";
+    freqBadge.textContent = freqLabel;
+    meta.appendChild(freqBadge);
 
-    if (!task.done) {
-      const button = document.createElement("button");
-      button.textContent = "Hotovo";
-      button.onclick = () => completeTask(task.task_id);
-      li.appendChild(button);
+    const pointsBadge = document.createElement("span");
+    pointsBadge.className = "badge points";
+    pointsBadge.textContent = task.done
+      ? `+${task.points_awarded} b.`
+      : `${task.base_points} b.`;
+    meta.appendChild(pointsBadge);
+
+    if (task.done) {
+      const statusBadge = document.createElement("span");
+      statusBadge.className = "badge status-done";
+      statusBadge.textContent = `splnil(a) ${task.completed_by}`;
+      meta.appendChild(statusBadge);
+    } else if (task.overdue) {
+      const statusBadge = document.createElement("span");
+      statusBadge.className = "badge status-overdue";
+      statusBadge.textContent = "opožděno";
+      meta.appendChild(statusBadge);
     }
+
+    info.appendChild(meta);
+    li.appendChild(info);
 
     list.appendChild(li);
   }

@@ -3,18 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <title>Domácí práce</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Domácí práce</h1>
+  <div class="app">
+    <h1>🧹 Domácí práce</h1>
 
-  <section>
-    <div id="user-tabs"></div>
-  </section>
+    <section class="card">
+      <div id="user-tabs" class="tabs"></div>
+    </section>
 
-  <section>
-    <h2>Úkoly</h2>
-    <ul id="task-list"></ul>
+    <section class="card">
+      <h2>Úkoly</h2>
+      <ul id="task-list"></ul>
+    </section>
+  </div>
+
+  <section class="full-bleed">
+    <h2 style="text-align: center;">Přehled a statistiky</h2>
+    <iframe
+      src="http://localhost:3000/public/dashboard/da11e1c8-02dc-469a-be01-090ab28d5931"
+      width="100%"
+      height="1400"
+      frameborder="0"
+    ></iframe>
   </section>
 
   <script src="app.js"></script>
