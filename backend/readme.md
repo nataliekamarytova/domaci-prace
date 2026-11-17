@@ -1,18 +1,19 @@
 Domaci-prace app – tasks/users backend + frontend
 
-Zajišťuje úkoly a uživatele a servíruje jednoduchý frontend (`../frontend`). Při splnění
-úkolu volá scoring službu v `python/` (`POST /completions`), aby spočítala a uložila body.
+Manages tasks and users, and serves the simple frontend (`../frontend`). When a task is
+completed, it calls the scoring service in `python/` (`POST /completions`) to calculate
+and store the points.
 
-## Jak spustit
+## How to run
 
-1. Spusť obě databáze (chores i tasks): `docker compose up -d` (v rootu repa)
-2. Spusť scoring službu: v `python/` `uv run fastapi dev main.py` (port 8000)
-3. Spusť tento backend: `uv sync` a pak `uv run fastapi dev main.py --port 8001`
-4. Otevři http://127.0.0.1:8001 (frontend) nebo http://127.0.0.1:8001/docs (API)
+1. Start both databases (chores and tasks): `docker compose up -d` (from the repo root)
+2. Start the scoring service: in `python/`, `uv run fastapi dev main.py` (port 8000)
+3. Start this backend: `uv sync` and then `uv run fastapi dev main.py --port 8001`
+4. Open http://127.0.0.1:8001 (frontend) or http://127.0.0.1:8001/docs (API)
 
 ## Project structure
 
-- `main.py` – API endpointy (/api/users, /api/tasks, /api/tasks/{id}/complete, /api/completions),
-  servíruje statický `../frontend`
-- `db.py` – databázové spojení a migrační runner (vlastní DB `tasks` na portu 5433)
-- `migrations/` – SQL migrace, aplikují se automaticky při startu
+- `main.py` – API endpoints (/api/users, /api/tasks, /api/tasks/{id}/complete, /api/completions),
+  serves the static `../frontend`
+- `db.py` – database connection and migration runner (own `tasks` database on port 5433)
+- `migrations/` – SQL migrations, applied automatically on startup

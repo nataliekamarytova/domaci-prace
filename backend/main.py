@@ -12,7 +12,7 @@ from db import init_db, pool
 
 SCORING_SERVICE_URL = os.environ.get("SCORING_SERVICE_URL", "http://localhost:8000")
 
-# Placeholder - čeká se na přesné pravidlo od přítele, zatím deadline + 3 dny.
+# Hard deadline pro úkoly s pevným deadline (testovací "TEST:" úkoly) = deadline + 3 dny.
 HARD_DEADLINE_OFFSET = timedelta(days=3)
 
 
@@ -174,6 +174,19 @@ def get_checklist(user_id: int):
             for task_id, period_key, points_awarded, user_name in cur.fetchall():
                 completions_by_key.setdefault((task_id, period_key), (points_awarded, user_name))
 
+            # nesdílené úkoly (myčka) - kolikrát a kým byly dnes splněny, i když
+            # zůstávají dál zaškrtnutelné (viz "shared" ve frontendu)
+            cur.execute(
+                """SELECT c.task_id, u.name, COUNT(*) AS cnt
+                   FROM completions c JOIN users u ON u.user_id = c.user_id
+                   WHERE c.completed_date = %s
+                   GROUP BY c.task_id, u.name""",
+                (now.date(),),
+            )
+            completed_today = {}
+            for task_id, user_name, cnt in cur.fetchall():
+                completed_today.setdefault(task_id, []).append({"name": user_name, "count": cnt})
+
             result = []
             for (task_id, name, base_points, priority, fixed_deadline, frequency, shared,
                  current_deadline, current_hard_deadline, current_completed_at,
@@ -212,6 +225,7 @@ def get_checklist(user_id: int):
                         "overdue": overdue,
                         "points_awarded": points_awarded,
                         "completed_by": completed_by,
+                        "completed_today": completed_today.get(task_id, []),
                     }
                 )
     return result
@@ -259,6 +273,12 @@ def complete_task(task_id: int, body: CompleteTaskRequest):
                     )
                     if cur.fetchone() is not None:
                         raise HTTPException(status_code=400, detail="Task already completed for this period")
+
+                if not shared:
+                    # nesdílený úkol (myčka) - libovolně opakovatelné, i tímtéž uživatelem
+                    # ve stejném období, proto se neukládá period_key (víc NULL hodnot
+                    # UNIQUE (task_id, user_id, period_key) nepovažuje za duplicitu)
+                    period_key = None
 
             cur.execute(
                 """INSERT INTO completions (task_id, user_id, completed_at, completed_date, period_key)

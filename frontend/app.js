@@ -83,6 +83,12 @@ async function loadChecklist() {
       statusBadge.className = "badge status-overdue";
       statusBadge.textContent = "opožděno";
       meta.appendChild(statusBadge);
+    } else if (!task.shared && task.completed_today.length > 0) {
+      const summary = task.completed_today.map((e) => `${e.name} ${e.count}×`).join(", ");
+      const statusBadge = document.createElement("span");
+      statusBadge.className = "badge status-done";
+      statusBadge.textContent = `dnes splněno: ${summary}`;
+      meta.appendChild(statusBadge);
     }
 
     info.appendChild(meta);
