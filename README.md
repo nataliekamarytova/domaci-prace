@@ -49,7 +49,7 @@ Dashboard výše je postavený na syntetických datech k 8.- 9.11.2026. Aplikace
 dobu ještě neměla dostatek reálných dat. S přítelem máme v plánu aplikaci běžně používat, 
 postupně se budou objevovat i reálná data.
 
-## Stack
+## Použité technologie
 
 - **FastAPI** + **Postgres** - dvě oddělené databáze (`tasks` pro úkoly/uživatele,
   `chores` pro scoring), každá ve svém Docker kontejneru
