@@ -16,11 +16,6 @@ def get_points(base_points,task_deadline,task_completed_at,task_priority,task_ha
             received_points = round(MIN_POINTS_RATIO*base_points)
     return(received_points)
 
-#points = base_points*(1-MIN_POINTS_RATIO)
-# deadline_difference = (task_completed_at - task_deadline).total_seconds()/(task_hard_deadline-task_deadline).total_seconds()
-#received points= round(points*deadline_difference)
-
-
 if __name__ == "__main__":
     deadline = datetime(2026, 11, 2, 18, 0)
     hard_deadline = datetime(2026, 11, 5, 18, 0)  # deadline + 3 dny

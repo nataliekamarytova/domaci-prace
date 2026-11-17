@@ -3,7 +3,7 @@ import os
 from psycopg_pool import ConnectionPool
 
 DATABASE_URL = "postgresql://chores:chores@localhost:5432/chores"
-pool = ConnectionPool(DATABASE_URL, open=False) #zatím není spojení otevřeno
+pool = ConnectionPool(DATABASE_URL, open=False) 
 
 def init_db(): #fce slouzici k vytvoreni scoring tabulky, dle nejnovejsi migrace
     with psycopg.connect(DATABASE_URL) as conn:
@@ -13,21 +13,21 @@ def init_db(): #fce slouzici k vytvoreni scoring tabulky, dle nejnovejsi migrace
                     filename TEXT PRIMARY KEY,
                     applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
                 )
-            """) #vytvori tabulku schema_migrations pokuzd uz nebude existovat s primarnim klicem filename a datumem
+            """)
 
-            cur.execute("SELECT filename FROM schema_migrations") #ptame se tabulky schema_migrations, ktere migrace uz probehly (ktere jsou zde zapsane)
-            applied = [row[0] for row in cur.fetchall()] #list comprehension ntic na []
+            cur.execute("SELECT filename FROM schema_migrations") 
+            applied = [row[0] for row in cur.fetchall()] 
 
-            for filename in sorted(os.listdir("migrations")): #projde všechny soubory ve složce migrations, seřazené podle jména
-                if not filename.endswith(".sql") or filename in applied: #přeskočí soubor, pokud nekončí na .sql (třeba omylem uložený jiný soubor) nebo už je v seznamu proběhlých.
+            for filename in sorted(os.listdir("migrations")):
+                if not filename.endswith(".sql") or filename in applied: 
                     continue
 
-                with open(os.path.join("migrations", filename)) as f: #otevře soubor a přečti jeho obsah do proměnné sql
+                with open(os.path.join("migrations", filename)) as f: 
                     sql = f.read()
 
-                cur.execute(sql) #spustí obsah souboru v DB
+                cur.execute(sql) 
                 cur.execute(
                     "INSERT INTO schema_migrations (filename) VALUES (%s)",
                     (filename,),
-                ) #zapiše do tabulky schema_migrations, že tenhle soubor proběhl. Příště se přeskočí.
-                print(f"Applied migration: {filename}") #do terminálu vypíše, která migrace právě proběhla, ať víme
+                ) 
+                print(f"Applied migration: {filename}") 

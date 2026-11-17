@@ -1,6 +1,7 @@
 Domaci-prace app – scoring service
 
-Short description: ***what this part of the app does.***
+Calculates and stores points for completed household tasks, based on the task's
+priority and how close to its deadline it was completed.
 
 ## How to run
 
