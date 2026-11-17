@@ -3,7 +3,7 @@ prace v domacnosti. Pouziva skutecnou scoring sluzbu (python/main.py na portu 80
 takze body jsou spocitane realnym get_points, ne vymyslene natvrdo.
 
 U sdilenych pravidelnych ukolu (daily/weekly/monthly, ne mycka, ne nepravidelne) simuluje
-"zivy" retezec instanci presne jako realna appka: instance zustava otevrena (po
+"zivy" retezec instanci presne jako realna aplikace: instance zustava otevrena (po
 hard_deadline zaseknuta na 25 %), dokud ji nekdo nesplni, a dalsi instance zacne az
 den po jejim deadline.
 
@@ -111,7 +111,7 @@ def insert_completion(cur, task_id, user_id, completed_at, period_key):
 
 def simulate_persistent_task(cur, client, task_id, name, base_points, priority, frequency):
     """Simuluje "živý" řetězec instancí pro sdílený pravidelný úkol - stejně, jak by to
-    dělala reálná appka při každodenním používání posledních ~6 týdnů."""
+    dělala reálná aplikace při každodenním používání posledních ~6 týdnů."""
     created = 0
     instance_start = START_MOMENT
 
@@ -122,7 +122,7 @@ def simulate_persistent_task(cur, client, task_id, name, base_points, priority, 
         completed_at = sample_completed_at(bucket, instance_start, deadline, hard_deadline)
 
         if completed_at > END_MOMENT:
-            # tahle instance zůstává nesplněná - appka ji ukáže jako aktuálně
+            # tahle instance zůstává nesplněná - aplikace ji ukáže jako aktuálně
             # otevřenou/opožděnou, přesně jako u reálného používání
             cur.execute(
                 """UPDATE tasks SET current_deadline = %s, current_hard_deadline = %s,
